@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f0f1d;
+  --background: #0A1A2F;
   --foreground: #f0f0f5;
 
   /* Core colors */
@@ -81,4 +81,17 @@ body {
 .btn-casino:hover {
   transform: scale(1.05);
   box-shadow: 0 0 12px var(--casino-gold);
+}
+
+.perspective {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
 }

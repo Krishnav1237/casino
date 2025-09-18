@@ -180,13 +180,13 @@ export default function StakeMinesGame() {
 
   const getCellContent = (cell: Cell) => {
     if (!cell.isRevealed) return null
-    if (cell.isMine) return <Star className="w-6 h-6 text-white" />
-    if (cell.isGem) return <Gem className="w-6 h-6 text-white" />
+    if (cell.isMine) return <Star className="w-12 h-12 text-white" />
+    if (cell.isGem) return <Gem className="w-12 h-12 text-white" />
     return null
   }
 
   const getCellClasses = (cell: Cell, row: number, col: number) => {
-    let classes = 'w-20 h-20 border border-gray-700 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-lg '
+    let classes = 'w-24 h-24 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-xl text-3xl '
     
     if (cell.isRevealed) {
       if (cell.isMine) {
@@ -195,32 +195,32 @@ export default function StakeMinesGame() {
         classes += 'bg-green-500 border-green-400'
       }
     } else {
-      classes += 'bg-slate-700 hover:bg-slate-600 border-slate-600'
+      classes += 'bg-slate-700 hover:bg-slate-600 border-yellow-400'
     }
     
     return classes
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-8xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-white">MINES</h1>
-          <div className="text-2xl font-bold text-yellow-400">
+          <div className="text-2xl font-bold text-white">
             ${balance.toFixed(2)} USD
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="flex justify-center">
           {/* Left Panel - Controls */}
-          <div className="bg-slate-800 rounded-xl p-6 space-y-6">
+          <div className="bg-slate-800 p-6 space-y-6 border-r-4 border-[#0A1A2F] rounded-l-2xl">
             <div>
               <label className="block text-white text-sm font-medium mb-2">Bet Amount</label>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 mb-2">
                 <button
                   onClick={() => setBetAmount(Math.max(0.01, betAmount - 1))}
-                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg"
+                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg font-bold text-lg shadow"
                   disabled={gameState === 'playing'}
                 >
                   -
@@ -229,18 +229,38 @@ export default function StakeMinesGame() {
                   type="number"
                   value={betAmount.toFixed(2)}
                   onChange={(e) => setBetAmount(Math.max(0.01, parseFloat(e.target.value) || 0.01))}
-                  className="flex-1 bg-slate-700 text-white px-4 py-2 rounded-lg text-center"
+                  className="flex-1 bg-slate-700 text-white px-4 py-2 rounded-lg text-center font-bold text-lg border-2 border-slate-600"
                   disabled={gameState === 'playing'}
                   step="0.01"
                   min="0.01"
                 />
                 <button
                   onClick={() => setBetAmount(betAmount + 1)}
-                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg"
+                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg font-bold text-lg shadow"
                   disabled={gameState === 'playing'}
                 >
                   +
                 </button>
+              </div>
+              {/* Quick Bet Buttons */}
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {[1, 5, 10, 25, 50, 100].map(amount => (
+                  <button
+                    key={amount}
+                    onClick={() => setBetAmount(amount)}
+                    className="bg-slate-700 hover:bg-slate-600 text-white py-1 rounded font-bold text-sm border border-slate-600 shadow"
+                    disabled={gameState === 'playing'}
+                  >
+                    ${amount}
+                  </button>
+                ))}
+              </div>
+              <hr className="my-4 border-slate-700/40" />
+              {/* Casino Info Section */}
+              <div className="bg-slate-700/60 rounded-lg p-3 text-xs text-white text-center font-semibold mb-2">
+                💡 Tip: The more mines, the higher the risk and reward!<br />
+                Last win: {recentGames[0]?.profit > 0 ? `+${recentGames[0].profit.toFixed(2)} USD` : `${recentGames[0].profit.toFixed(2)} USD`}<br />
+                Last multiplier: {recentGames[0]?.multiplier.toFixed(2)}x
               </div>
             </div>
 
@@ -259,8 +279,8 @@ export default function StakeMinesGame() {
             </div>
 
             <div className="text-center">
-              <div className="text-green-400 text-2xl font-bold mb-2">
-                Next: ${(betAmount * currentMultiplier).toFixed(2)} USD
+              <div className="text-green-400 text-2xl font-bold mb-2 bg-slate-700">
+                ${(betAmount * currentMultiplier).toFixed(2)} USD
               </div>
               <div className="text-gray-400 text-sm">
                 {currentMultiplier.toFixed(2)}x multiplier
@@ -274,7 +294,7 @@ export default function StakeMinesGame() {
                   className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold text-lg"
                   disabled={betAmount > balance}
                 >
-                  START GAME
+                  START BET
                 </button>
               )}
 
@@ -293,7 +313,7 @@ export default function StakeMinesGame() {
                   onClick={resetGame}
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-bold text-lg"
                 >
-                  NEW GAME
+                  New BET
                 </button>
               )}
             </div>
@@ -305,10 +325,10 @@ export default function StakeMinesGame() {
           </div>
 
           {/* Center Panel - Game Grid */}
-          <div className="bg-slate-800 rounded-xl p-6">
-            <h2 className="text-white text-xl font-bold text-center mb-6">MINES GAME</h2>
+          <div className="bg-slate-800 p-6 rounded-r-2xl">
+            {/* <h2 className="text-white text-xl font-bold text-center mb-6">MINES GAME</h2> */}
             
-            <div className="grid grid-cols-5 gap-6 mb-6">
+            <div className="grid grid-cols-5 gap-8">
               {grid.map((row, rowIndex) =>
                 row.map((cell, colIndex) => (
                   <div
@@ -336,7 +356,7 @@ export default function StakeMinesGame() {
           </div>
 
           {/* Right Panel - Recent Games */}
-          <div className="bg-slate-800 rounded-xl p-6">
+          {/* <div className="bg-slate-800 rounded-xl p-6">
             <h3 className="text-white text-lg font-bold mb-4">Recent Games</h3>
             <div className="space-y-2">
               {recentGames.map((game, index) => (
@@ -361,7 +381,7 @@ export default function StakeMinesGame() {
                 <p>Gambling can be addictive, please play responsibly.</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
