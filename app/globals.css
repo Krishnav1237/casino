@@ -1,23 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #0f0f1d;
+  --foreground: #f0f0f5;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Core colors */
+  --primary: #123f7a;
+  --secondary: #2868bc;
+
+  /* Neon accent colors */
+  --casino-accent-blue: #0ff0fc;  /* Cyan/Teal glow */
+  --casino-accent-green: #00ff99;
+  --casino-accent-purple: #6c59ff;
+
+  /* Stake-like bet colors */
+  --casino-bet-win: #00e676;
+  --casino-bet-loss: #ff3d00;
+
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-casino: 'Rajdhani', 'sans-serif';
 }
 
-@media (prefers-color-scheme: dark) {
+
+@theme inline {
+  --color-background: var(--casino-black);       /* Dark mode background */
+  --color-foreground: var(--casino-white);       /* Light text for dark bg */
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Primary Casino Colors */
+  --color-primary: #0e0e10;
+  --color-secondary: #f0f0f5;
+
+  /* Neon Accents */
+  --color-casino-accent-blue: #0ff0fc;
+  --color-casino-accent-purple: #a259ff;
+  --color-casino-accent-green: #00ff99;
+
+  /* Win/Loss Indicators */
+  --color-casino-green: #00e676;
+  --color-casino-red: #ff3d00;
+
+  /* Additional optional */
+  --color-casino-accent: var(--color-casino-accent-blue); /* fallback main accent */
+}
+
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);
@@ -26,7 +63,22 @@ body {
 }
 
 .heading {
-  font-family: 'Rajdhani', 'sans-serif';
+  font-family: var(--font-casino);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
+.btn-casino {
+  background-color: var(--casino-gold);
+  color: var(--casino-black);
+  font-weight: bold;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
+.btn-casino:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px var(--casino-gold);
+}
