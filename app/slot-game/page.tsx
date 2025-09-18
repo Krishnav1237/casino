@@ -1,33 +1,52 @@
 'use client'
 
 import SlotGame from "@/components/SlotMachine";
+import Link from "next/link";
+import { ArrowLeft, Home } from "lucide-react";
 import { useState } from "react";
 
-export default function Home() {
-  
+export default function SlotGamePage() {
   const [balance, setBalance] = useState(1000);
-  
+
   const handleBalanceChange = (amount: number) => {
     setBalance(prev => prev + amount);
   };
-  
+
   const handleSlotResult = (result: { bet: number; win: number; symbols: string[] }) => {
     console.log('Slot result:', result);
   };
 
   return (
-    <div 
-      className="w-full max-w-screen-2xl mx-auto min-h-screen"
-    >
-      <h1 className="max-w-screen-lg text-4xl font-bold flex items-center h-20">
-        Slot Game
-      </h1>
-      <SlotGame 
-        balance={balance} 
-        onBalanceChange={handleBalanceChange}
-        onGameResult={handleSlotResult}
-      />
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="flex items-center justify-between px-6 h-16 border-b border-accent/30 bg-primary">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-accent hover:text-secondary transition-colors"
+        >
+          <ArrowLeft size={20} />
+          <span className="font-semibold text-base">Back to Casino</span>
+        </Link>
+
+        <h1 className="text-xl font-semibold text-foreground">Slot Game</h1>
+
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-accent hover:text-secondary transition-colors"
+        >
+          <Home size={20} />
+          <span className="font-semibold text-base">Home</span>
+        </Link>
+      </nav>
+
+      {/* Game Content */}
+      <main className="px-4 py-6 max-w-screen-xl mx-auto">
+        <SlotGame 
+          balance={balance} 
+          onBalanceChange={handleBalanceChange}
+          onGameResult={handleSlotResult}
+        />
+      </main>
     </div>
   );
 }
-

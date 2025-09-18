@@ -1,21 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0A1A2F;
-  --foreground: #f0f0f5;
+  --background: #0D1B2A;     
+  --foreground: #F5F7FA;     
+  --primary: #1E293B;        
+  --secondary: #334155;   
+  --accent: #5696df;         
 
-  /* Core colors */
-  --primary: #123f7a;
-  --secondary: #2868bc;
-
-  /* Neon accent colors */
-  --casino-accent-blue: #0ff0fc;  /* Cyan/Teal glow */
-  --casino-accent-green: #00ff99;
-  --casino-accent-purple: #6c59ff;
-
-  /* Stake-like bet colors */
-  --casino-bet-win: #00e676;
-  --casino-bet-loss: #ff3d00;
+  --success: #22C55E;        
+  --danger: #EF4444;         
+  --muted: #94A3B8;
 
   /* Fonts */
   --font-sans: var(--font-geist-sans);
@@ -32,20 +26,13 @@
   --font-mono: var(--font-mono);
 
   /* Primary Casino Colors */
-  --color-primary: #0e0e10;
-  --color-secondary: #f0f0f5;
-
-  /* Neon Accents */
-  --color-casino-accent-blue: #0ff0fc;
-  --color-casino-accent-purple: #a259ff;
-  --color-casino-accent-green: #00ff99;
-
-  /* Win/Loss Indicators */
-  --color-casino-green: #00e676;
-  --color-casino-red: #ff3d00;
-
-  /* Additional optional */
-  --color-casino-accent: var(--color-casino-accent-blue); /* fallback main accent */
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-muted: var(--muted);
 }
 
 

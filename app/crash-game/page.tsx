@@ -1,23 +1,36 @@
 'use client'
 
 import CrashGame from "@/components/CrashGame";
+import Link from "next/link";
+import { ArrowLeft, Home } from "lucide-react";
 import { useState } from "react";
 
-export default function Home() {
-
+export default function CrashGamePage() {
   const [balance, setBalance] = useState(1000);
 
   return (
-    <>
-      <h1 className="heading text-5xl font-bold text-center py-5">
-        Casino
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/20 to-background">
+      {/* Navigation */}
+      <nav className="flex items-center justify-between p-6 border-b border-accent/20">
+        <Link href="/" className="flex items-center gap-2 text-accent hover:text-secondary transition-colors">
+          <ArrowLeft size={20} />
+          <span className="font-semibold">Back to Casino</span>
+        </Link>
+        <h1 className="text-2xl font-bold text-foreground">
+          🚀 Crash Game
+        </h1>
+        <Link href="/" className="flex items-center gap-2 text-accent hover:text-secondary transition-colors">
+          <Home size={20} />
+          <span className="font-semibold">Home</span>
+        </Link>
+      </nav>
+
+      {/* Game Content */}
       <CrashGame
         balance={balance}
         onBalanceChange={(amount) => setBalance(prev => prev + amount)}
-        onGameResult={(result) => console.log('Slot result:', result)}
+        onGameResult={(result) => console.log('Crash result:', result)}
       />
-
-    </>  );
+    </div>
+  );
 }
-
