@@ -257,11 +257,11 @@ export default function StakeMinesGame() {
               </div>
               <hr className="my-4 border-slate-700/40" />
               {/* Casino Info Section */}
-              <div className="bg-slate-700/60 rounded-lg p-3 text-xs text-white text-center font-semibold mb-2">
+              {/* <div className="bg-slate-700/60 rounded-lg p-3 text-xs text-white text-center font-semibold mb-2">
                 💡 Tip: The more mines, the higher the risk and reward!<br />
                 Last win: {recentGames[0]?.profit > 0 ? `+${recentGames[0].profit.toFixed(2)} USD` : `${recentGames[0].profit.toFixed(2)} USD`}<br />
                 Last multiplier: {recentGames[0]?.multiplier.toFixed(2)}x
-              </div>
+              </div> */}
             </div>
 
             <div>

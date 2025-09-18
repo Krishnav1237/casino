@@ -408,16 +408,16 @@ export default function BlackjackGame() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="flex flex-col lg:flex-row justify-center">
           {/* Left Panel - Controls */}
-          <div className="bg-gray-900 rounded-xl p-6 space-y-6">
+          <div className="bg-slate-800 p-8 space-y-8 border-r-4 border-[#0A1A2F] rounded-l-2xl shadow-xl min-w-[200px]">
             {/* Bet Amount Input */}
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Bet Amount</label>
-              <div className="flex items-center space-x-2">
+              <label className="block text-white text-lg font-semibold mb-4 tracking-wide">Bet Amount</label>
+              <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setBetAmount(Math.max(0, betAmount - 5))}
-                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg"
+                  className="bg-slate-700 hover:bg-slate-600 text-white w-12 h-12 rounded-xl font-bold text-xl shadow-md transition-colors"
                   disabled={gameState !== 'betting'}
                 >
                   -
@@ -426,42 +426,42 @@ export default function BlackjackGame() {
                   type="number"
                   value={betAmount.toFixed(2)}
                   onChange={(e) => setBetAmount(Math.max(0, parseFloat(e.target.value) || 0))}
-                  className="flex-1 bg-slate-700 text-white px-4 py-2 rounded-lg text-center"
+                  className="flex-1 bg-slate-700 text-white px-6 py-4 rounded-xl text-center text-xl font-bold border-2 border-slate-600 focus:border-slate-500"
                   disabled={gameState !== 'betting'}
                   step="1"
                   min="0"
                 />
                 <button
                   onClick={() => setBetAmount(betAmount + 5)}
-                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg"
+                  className="bg-slate-700 hover:bg-slate-600 text-white w-12 h-12 rounded-xl font-bold text-xl shadow-md transition-colors"
                   disabled={gameState !== 'betting'}
                 >
                   +
                 </button>
               </div>
-              <div className="text-center mt-2">
-                <div className="text-green-400 text-lg font-bold">
+              <div className="text-center mt-4">
+                <div className="text-green-400 text-2xl font-extrabold drop-shadow">
                   ${betAmount.toFixed(2)} USD
                 </div>
               </div>
             </div>
 
             <div className="text-center">
-              <div className="text-gray-400 text-sm">
+              <div className="text-gray-400 text-base font-medium tracking-wide">
                 {gameResult === 'blackjack' ? '2.5x multiplier' : 
                  gameResult === 'win' ? '2.0x multiplier' : 
                  gameResult === 'push' ? '1.0x multiplier' : '1.0x multiplier'}
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-6">
               {gameState === 'betting' && (
                 <button
                   onClick={startGame}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-bold text-lg"
+                  className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white py-4 rounded-xl font-extrabold text-2xl shadow-lg transition-colors tracking-wide"
                   disabled={betAmount === 0 || betAmount > balance}
                 >
-                  START GAME
+                  START BET
                 </button>
               )}
 
@@ -469,20 +469,20 @@ export default function BlackjackGame() {
                 <>
                   <button
                     onClick={hit}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-bold"
+                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white py-4 rounded-xl font-extrabold text-xl shadow-lg transition-colors tracking-wide"
                   >
                     HIT
                   </button>
                   <button
                     onClick={stand}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold"
+                    className="w-full bg-gradient-to-r from-green-500 to-lime-500 hover:from-green-600 hover:to-lime-600 text-white py-4 rounded-xl font-extrabold text-xl shadow-lg transition-colors tracking-wide"
                   >
                     STAND
                   </button>
                   {canDoubleDown && (
                     <button
                       onClick={doubleDown}
-                      className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-bold"
+                      className="w-full bg-orange-400 text-white py-3 rounded-xl font-extrabold text-xl shadow-lg transition-colors tracking-wide"
                       disabled={betAmount > balance}
                     >
                       DOUBLE DOWN
@@ -494,55 +494,55 @@ export default function BlackjackGame() {
               {gameState === 'ended' && (
                 <button
                   onClick={resetGame}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-bold text-lg"
+                  className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white py-4 rounded-xl font-extrabold text-2xl shadow-lg transition-colors tracking-wide"
                 >
                   NEW GAME
                 </button>
               )}
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between mt-8">
               <button
                 onClick={() => setAutoGame(!autoGame)}
-                className={`px-4 py-2 rounded-lg text-white font-medium ${
-                  autoGame ? 'bg-blue-500' : 'bg-gray-600'
+                className={`px-6 py-3 rounded-xl text-white font-bold shadow-md transition-colors text-lg ${
+                  autoGame ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-600 hover:bg-gray-700'
                 }`}
               >
                 Auto Game
               </button>
               <button
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white font-bold text-lg transition-colors"
               >
                 RANDOM
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Center Panel - Game Table */}
-          <div className="lg:col-span-2 rounded-xl p-8 relative shadow-2xl border border-white">
-            <div className="absolute inset-0 bg-gradient-radial from-green-700 to-green-900 rounded-xl opacity-60"></div>
+          <div className="bg-slate-800 p-8 rounded-r-2xl shadow-2xl min-w-[800px] relative border border-slate-700 h-[80vh]">
+            <div className="absolute inset-0 bg-gradient-radial from-green-700 to-green-900 rounded-2xl opacity-60"></div>
             <div className="relative z-10">
               {/* Dealer Hand */}
-              <div className="mb-8">
-                <h3 className="text-white text-lg font-bold mb-4">
+              <div className="mb-12">
+                <h3 className="text-white text-2xl font-extrabold mb-6 tracking-wide">
                   Dealer {gameState !== 'betting' && gameState !== 'dealing' && gameState !== 'playing' && `(${dealerHand.value})`}
                 </h3>
-                <div className="flex space-x-2">
+                <div className="flex space-x-6 justify-center">
                   {dealerHand.cards.map((card, index) => (
-    <CardComponent
-      key={index}
-      rank={card.rank}
-      suit={card.suit}
-      hidden={index === 1 && (gameState === "dealing" || gameState === "playing")}
-    />
-  ))}
+                    <CardComponent
+                      key={index}
+                      rank={card.rank}
+                      suit={card.suit}
+                      hidden={index === 1 && (gameState === "dealing" || gameState === "playing")}
+                    />
+                  ))}
                 </div>
               </div>
 
               {/* Game Result */}
               {gameResult && (
-                <div className="text-center mb-6">
-                  <div className={`text-2xl font-bold ${
+                <div className="text-center mb-10">
+                  <div className={`text-4xl font-extrabold drop-shadow-lg ${
                     gameResult === 'win' || gameResult === 'blackjack' ? 'text-green-400' :
                     gameResult === 'lose' ? 'text-red-400' : 'text-yellow-400'
                   }`}>
@@ -556,32 +556,32 @@ export default function BlackjackGame() {
 
               {/* Player Hand */}
               <div>
-                <h3 className="text-white text-lg font-bold mb-4">
+                <h3 className="text-white text-2xl font-extrabold mb-6 tracking-wide">
                   You {playerHand.cards.length > 0 && `(${playerHand.value})`}
                   {playerHand.isBlackjack && ' - Blackjack!'}
                   {playerHand.isBusted && ' - Busted!'}
                 </h3>
-                <div className="flex space-x-2">
+                <div className="flex space-x-6 justify-center">
                   {playerHand.cards.map((card, index) => (
-    <CardComponent
-      key={index}
-      rank={card.rank}
-      suit={card.suit}
-    />
-  ))}
+                    <CardComponent
+                      key={index}
+                      rank={card.rank}
+                      suit={card.suit}
+                    />
+                  ))}
                 </div>
               </div>
 
               {hasDoubledDown && (
-                <div className="text-center mt-4">
-                  <div className="text-purple-400 font-bold">DOUBLED DOWN!</div>
+                <div className="text-center mt-8">
+                  <div className="text-orange-400 font-extrabold text-xl drop-shadow">DOUBLED DOWN!</div>
                 </div>
               )}
             </div>
           </div>
 
           {/* Right Panel - Recent Games */}
-          <div className="bg-gray-900 rounded-xl p-6">
+          {/* <div className="bg-gray-900 rounded-xl p-6">
             <h3 className="text-white text-lg font-bold mb-4">Recent Games</h3>
             <div className="space-y-2">
               {recentGames.map((game, index) => (
@@ -615,7 +615,7 @@ export default function BlackjackGame() {
                 <p className="text-center">Gambling can be addictive, please play responsibly.</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
