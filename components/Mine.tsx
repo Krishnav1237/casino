@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react'
 import { Star, Gem } from 'lucide-react'
+import { useBalanceStore } from '../store/balanceStore'
 
 interface Cell {
   isRevealed: boolean
@@ -12,7 +13,7 @@ interface Cell {
 type GameState = 'betting' | 'playing' | 'ended'
 
 export default function StakeMinesGame() {
-  const [balance, setBalance] = useState(1250.00)
+  const { balance, increment, decrement } = useBalanceStore()
   const [betAmount, setBetAmount] = useState(2.00)
   const [mineCount, setMineCount] = useState(3)
   const [gameState, setGameState] = useState<GameState>('betting')
@@ -102,7 +103,7 @@ export default function StakeMinesGame() {
       return
     }
     
-    setBalance(prev => prev - betAmount)
+    decrement(betAmount)
     setGameState('playing')
     setCurrentMultiplier(1.0)
     setGemsFound(0)
@@ -111,7 +112,7 @@ export default function StakeMinesGame() {
     const newGrid = initializeGrid()
     const gridWithMines = placeMines(newGrid, mineCount)
     setGrid(gridWithMines)
-  }, [betAmount, balance, mineCount, initializeGrid, placeMines])
+  }, [betAmount, balance, mineCount, initializeGrid, placeMines, decrement])
 
   // Handle cell click
   const handleCellClick = useCallback((row: number, col: number) => {
@@ -154,7 +155,7 @@ export default function StakeMinesGame() {
     if (gameState !== 'playing' || gemsFound === 0) return
     
     const winnings = betAmount * currentMultiplier
-    setBalance(prev => prev + winnings)
+    increment(winnings)
     setGameState('ended')
     setGameResult('win')
     
@@ -163,7 +164,7 @@ export default function StakeMinesGame() {
       { profit: winnings - betAmount, mines: mineCount, multiplier: currentMultiplier },
       ...prev.slice(0, 4)
     ])
-  }, [gameState, gemsFound, betAmount, currentMultiplier, mineCount])
+  }, [gameState, gemsFound, betAmount, currentMultiplier, mineCount, increment])
 
   // Reset game
   const resetGame = useCallback(() => {
@@ -186,7 +187,7 @@ export default function StakeMinesGame() {
   }
 
   const getCellClasses = (cell: Cell, row: number, col: number) => {
-    let classes = 'w-24 h-24 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-xl text-3xl '
+    let classes = 'w-12 h-12 md:w-24 md:h-24 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-xl text-3xl '
     
     if (cell.isRevealed) {
       if (cell.isMine) {
@@ -212,9 +213,9 @@ export default function StakeMinesGame() {
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex flex-col-reverse md:flex-row justify-center">
           {/* Left Panel - Controls */}
-          <div className="bg-slate-800 p-6 space-y-6 border-r-4 border-[#0A1A2F] rounded-l-2xl">
+          <div className="bg-slate-800 p-6 space-y-6 border-t-4 md:border-t-0 md:border-r-4 border-[#0A1A2F] md:rounded-l-2xl rounded-b-2xl md:rounded-r-none">
             <div>
               <label className="block text-white text-sm font-medium mb-2">Bet Amount</label>
               <div className="flex items-center space-x-2 mb-2">
@@ -325,10 +326,10 @@ export default function StakeMinesGame() {
           </div>
 
           {/* Center Panel - Game Grid */}
-          <div className="bg-slate-800 p-6 rounded-r-2xl">
+          <div className="bg-slate-800 p-6 md:rounded-r-2xl rounded-t-2xl md:rounded-t-none">
             {/* <h2 className="text-white text-xl font-bold text-center mb-6">MINES GAME</h2> */}
             
-            <div className="grid grid-cols-5 gap-8">
+            <div className="grid grid-cols-5 gap-4 md:gap-8">
               {grid.map((row, rowIndex) =>
                 row.map((cell, colIndex) => (
                   <div

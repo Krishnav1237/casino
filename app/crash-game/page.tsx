@@ -3,10 +3,10 @@
 import CrashGame from "@/components/CrashGame";
 import Link from "next/link";
 import { ArrowLeft, Home } from "lucide-react";
-import { useState } from "react";
+import { useBalanceStore } from "../../store/balanceStore";
 
 export default function CrashGamePage() {
-  const [balance, setBalance] = useState(1000);
+  const { balance, increment, decrement } = useBalanceStore();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/20 to-background">
@@ -28,7 +28,13 @@ export default function CrashGamePage() {
       {/* Game Content */}
       <CrashGame
         balance={balance}
-        onBalanceChange={(amount) => setBalance(prev => prev + amount)}
+        onBalanceChange={(amount) => {
+          if (amount > 0) {
+            increment(amount);
+          } else {
+            decrement(Math.abs(amount));
+          }
+        }}
         onGameResult={(result) => console.log('Crash result:', result)}
       />
     </div>

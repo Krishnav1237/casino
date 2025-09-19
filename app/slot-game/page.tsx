@@ -3,13 +3,17 @@
 import SlotGame from "@/components/SlotMachine";
 import Link from "next/link";
 import { ArrowLeft, Home } from "lucide-react";
-import { useState } from "react";
+import { useBalanceStore } from "../../store/balanceStore";
 
 export default function SlotGamePage() {
-  const [balance, setBalance] = useState(1000);
+  const { balance, increment, decrement } = useBalanceStore();
 
   const handleBalanceChange = (amount: number) => {
-    setBalance(prev => prev + amount);
+    if (amount > 0) {
+      increment(amount);
+    } else {
+      decrement(Math.abs(amount));
+    }
   };
 
   const handleSlotResult = (result: { bet: number; win: number; symbols: string[] }) => {

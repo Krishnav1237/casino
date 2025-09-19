@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Spade, Heart, Diamond, Club } from 'lucide-react'
 import CardComponent from './CardComponent'
+import { useBalanceStore } from '../store/balanceStore'
 
 interface Card {
   suit: 'spades' | 'hearts' | 'diamonds' | 'clubs'
@@ -19,7 +20,7 @@ type GameState = 'betting' | 'dealing' | 'playing' | 'dealer-turn' | 'ended'
 type GameResult = 'win' | 'lose' | 'push' | 'blackjack' | null
 
 export default function BlackjackGame() {
-  const [balance, setBalance] = useState(1250.00)
+  const { balance, increment, decrement } = useBalanceStore()
   const [betAmount, setBetAmount] = useState(10.00)
   const [gameState, setGameState] = useState<GameState>('betting')
   const [deck, setDeck] = useState<Card[]>([])
@@ -28,14 +29,14 @@ export default function BlackjackGame() {
   const [gameResult, setGameResult] = useState<GameResult>(null)
   const [canDoubleDown, setCanDoubleDown] = useState(false)
   const [hasDoubledDown, setHasDoubledDown] = useState(false)
-  const [autoGame, setAutoGame] = useState(false)
-  const [recentGames, setRecentGames] = useState([
-    { result: 'Blackjack!', profit: 15.00, bet: 10.00, multiplier: 2.5 },
-    { result: 'Win', profit: 8.50, bet: 8.50, multiplier: 2.0 },
-    { result: 'Loss', profit: -12.00, bet: 12.00, multiplier: 0 },
-    { result: 'Push', profit: 0.00, bet: 15.00, multiplier: 1.0 },
-    { result: 'Win', profit: 6.00, bet: 6.00, multiplier: 2.0 }
-  ])
+  // const [autoGame, setAutoGame] = useState(false)
+  // const [recentGames, setRecentGames] = useState([
+  //   { result: 'Blackjack!', profit: 15.00, bet: 10.00, multiplier: 2.5 },
+  //   { result: 'Win', profit: 8.50, bet: 8.50, multiplier: 2.0 },
+  //   { result: 'Loss', profit: -12.00, bet: 12.00, multiplier: 0 },
+  //   { result: 'Push', profit: 0.00, bet: 15.00, multiplier: 1.0 },
+  //   { result: 'Win', profit: 6.00, bet: 6.00, multiplier: 2.0 }
+  // ])
 
   // Create a shuffled deck
   const createDeck = useCallback(() => {
@@ -105,7 +106,7 @@ export default function BlackjackGame() {
       return
     }
 
-    setBalance(prev => prev - betAmount)
+    decrement(betAmount)
     setGameState('dealing')
     setGameResult(null)
     setHasDoubledDown(false)
@@ -203,7 +204,7 @@ export default function BlackjackGame() {
       multiplier = 1.0
     }
 
-    setBalance(prev => prev + winnings)
+    increment(winnings)
     setGameResult(result)
     setGameState('ended')
 
@@ -221,10 +222,10 @@ export default function BlackjackGame() {
                      result === 'win' ? 'Win' : 
                      result === 'lose' ? 'Loss' : 'Push'
 
-    setRecentGames(prev => [
-      { result: resultText, profit, bet: betAmount, multiplier },
-      ...prev.slice(0, 4)
-    ])
+    // setRecentGames(prev => [
+    //   { result: resultText, profit, bet: betAmount, multiplier },
+    //   ...prev.slice(0, 4)
+    // ])
   }, [calculateHandValue, betAmount])
 
   // Player hits
@@ -302,7 +303,7 @@ export default function BlackjackGame() {
       return
     }
 
-    setBalance(prev => prev - betAmount)
+    decrement(betAmount)
     setBetAmount(prev => prev * 2)
     setHasDoubledDown(true)
     
@@ -398,19 +399,19 @@ export default function BlackjackGame() {
   }, [createDeck])
 
   return (
-    <div className="min-h-screen bg-[#0A1A2F] p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-8xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-white">BLACKJACK</h1>
-          <div className="text-2xl font-bold text-yellow-400">
+          <div className="text-2xl font-bold">
             ${balance.toFixed(2)} USD
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row justify-center">
+        <div className="flex flex-col-reverse lg:flex-row justify-center">
           {/* Left Panel - Controls */}
-          <div className="bg-slate-800 p-8 space-y-8 border-r-4 border-[#0A1A2F] rounded-l-2xl shadow-xl min-w-[200px]">
+          <div className="bg-slate-800 p-8 px-4 md:px-8 space-y-8 border-t-4 md:border-t-0 md:border-r-4 border-[#0A1A2F] md:rounded-l-2xl shadow-xl md:min-w-[200px]">
             {/* Bet Amount Input */}
             <div>
               <label className="block text-white text-lg font-semibold mb-4 tracking-wide">Bet Amount</label>
@@ -426,7 +427,7 @@ export default function BlackjackGame() {
                   type="number"
                   value={betAmount.toFixed(2)}
                   onChange={(e) => setBetAmount(Math.max(0, parseFloat(e.target.value) || 0))}
-                  className="flex-1 bg-slate-700 text-white px-6 py-4 rounded-xl text-center text-xl font-bold border-2 border-slate-600 focus:border-slate-500"
+                  className="flex-1 bg-slate-700 text-white md:px-6 py-4 rounded-xl text-center text-xl font-bold border-2 border-slate-600 focus:border-slate-500"
                   disabled={gameState !== 'betting'}
                   step="1"
                   min="0"
@@ -519,7 +520,7 @@ export default function BlackjackGame() {
           </div>
 
           {/* Center Panel - Game Table */}
-          <div className="bg-slate-800 p-8 rounded-r-2xl shadow-2xl min-w-[800px] relative border border-slate-700 h-[80vh]">
+          <div className="bg-slate-800 p-8 md:rounded-r-2xl shadow-2xl md:min-w-[800px] relative border border-slate-700 h-[80vh]">
             <div className="absolute inset-0 bg-gradient-radial from-green-700 to-green-900 rounded-2xl opacity-60"></div>
             <div className="relative z-10">
               {/* Dealer Hand */}
