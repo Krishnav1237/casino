@@ -1,6 +1,6 @@
 'use client'
 
-import BlackjackGame from '@/components/BlackJack'
+import BlackJackGame from '@/components/BlackJack/BlackJackGame'
 import Navbar from '@/components/Navbar'
 import { ArrowLeft, Home } from 'lucide-react'
 import Link from 'next/link'
@@ -13,7 +13,7 @@ function BlackJack() {
       <Navbar title='Blackjack Game' />
 
       {/* Game Content */}
-      <BlackjackGame/>
+      <BlackJackGame/>
     </div>
   )
 }
