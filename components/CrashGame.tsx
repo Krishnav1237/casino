@@ -140,7 +140,7 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
   };
 
   return (
-    <div className="w-full px-4 sm:px-6 md:px-8 py-6">
+    <div className="w-full px-4 sm:px-6 md:px-8 py-6 min-h-full">
       <div className="max-w-screen-xl mx-auto bg-primary/90 rounded-2xl p-8 px-10 shadow-2xl backdrop-blur-md flex flex-col md:flex-row gap-8">
         {/* Graph side */}
         <div className="flex-1 flex flex-col items-center justify-center">

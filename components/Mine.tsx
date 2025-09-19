@@ -187,7 +187,7 @@ export default function StakeMinesGame() {
   }
 
   const getCellClasses = (cell: Cell, row: number, col: number) => {
-    let classes = 'w-12 h-12 md:w-24 md:h-24 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-xl text-3xl '
+    let classes = 'w-12 h-12 md:w-20 md:h-20 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-xl text-3xl '
     
     if (cell.isRevealed) {
       if (cell.isMine) {
@@ -203,16 +203,8 @@ export default function StakeMinesGame() {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-full p-6">
       <div className="max-w-8xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-white">MINES</h1>
-          <div className="text-2xl font-bold text-white">
-            ${balance.toFixed(2)} USD
-          </div>
-        </div>
-
         <div className="flex flex-col-reverse md:flex-row justify-center">
           {/* Left Panel - Controls */}
           <div className="bg-slate-800 p-6 space-y-6 border-t-4 md:border-t-0 md:border-r-4 border-[#0A1A2F] md:rounded-l-2xl rounded-b-2xl md:rounded-r-none">

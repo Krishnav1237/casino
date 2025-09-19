@@ -1,9 +1,8 @@
 'use client'
 
 import SlotGame from "@/components/SlotMachine";
-import Link from "next/link";
-import { ArrowLeft, Home } from "lucide-react";
 import { useBalanceStore } from "../../store/balanceStore";
+import Navbar from "@/components/Navbar";
 
 export default function SlotGamePage() {
   const { balance, increment, decrement } = useBalanceStore();
@@ -22,27 +21,7 @@ export default function SlotGamePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="flex items-center justify-between px-6 h-16 border-b border-accent/30 bg-primary">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-accent hover:text-secondary transition-colors"
-        >
-          <ArrowLeft size={20} />
-          <span className="font-semibold text-base">Back to Casino</span>
-        </Link>
-
-        <h1 className="text-xl font-semibold text-foreground">Slot Game</h1>
-
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-accent hover:text-secondary transition-colors"
-        >
-          <Home size={20} />
-          <span className="font-semibold text-base">Home</span>
-        </Link>
-      </nav>
-
+      <Navbar title="Slot Game" />
       {/* Game Content */}
       <main className="px-4 py-6 max-w-screen-xl mx-auto">
         <SlotGame 
