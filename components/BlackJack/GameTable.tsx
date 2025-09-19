@@ -34,8 +34,11 @@ export const GameTable: React.FC<GameTableProps> = ({
       gameResult === 'blackjack' ? '🃏 BLACKJACK!' : ''
 
     return (
-      <div className="text-center mb-10">
-        <div className={`text-4xl font-extrabold drop-shadow-lg ${colorClass}`}>
+      <div className="text-center mb-2">
+        <div className={`text-3xl font-extrabold drop-shadow-lg ${
+          gameResult === 'win' || gameResult === 'blackjack' ? 'text-success' :
+          gameResult === 'lose' ? 'text-danger' : 'text-accent'
+        }`}>
           {resultText}
         </div>
       </div>
@@ -43,12 +46,12 @@ export const GameTable: React.FC<GameTableProps> = ({
   }
 
   return (
-    <div className="bg-slate-800 p-8 md:rounded-r-2xl shadow-2xl md:min-w-[800px] relative border border-slate-700 h-[80vh]">
-      <div className="absolute inset-0 bg-gradient-radial from-green-700 to-green-900 rounded-2xl opacity-60"></div>
+    <div className="bg-primary/60 p-8 md:rounded-r-2xl shadow-2xl md:min-w-[800px] relative border border-accent/10 h-[80vh] text-foreground">
+      <div className="absolute inset-0 bg-gradient-to-br from-accent/6 to-primary/8 rounded-2xl opacity-90"></div>
       <div className="relative z-10">
         {/* Dealer Hand */}
         <div className="mb-12">
-          <h3 className="text-white text-2xl font-extrabold mb-6 tracking-wide">
+          <h3 className="text-foreground text-2xl font-extrabold mb-6 tracking-wide">
             Dealer {shouldShowDealerValue && `(${dealerHand.value})`}
           </h3>
           <div className="flex space-x-6 justify-center">
@@ -68,7 +71,7 @@ export const GameTable: React.FC<GameTableProps> = ({
 
         {/* Player Hand */}
         <div>
-          <h3 className="text-white text-2xl font-extrabold mb-6 tracking-wide">
+          <h3 className="text-foreground text-2xl font-extrabold mb-6 tracking-wide">
             You {playerHand.cards.length > 0 && `(${playerHand.value})`}
             {playerHand.isBlackjack && ' - Blackjack!'}
             {playerHand.isBusted && ' - Busted!'}
@@ -87,7 +90,7 @@ export const GameTable: React.FC<GameTableProps> = ({
         {/* Double Down Indicator */}
         {hasDoubledDown && (
           <div className="text-center mt-8">
-            <div className="text-orange-400 font-extrabold text-xl drop-shadow">
+            <div className="text-accent font-extrabold text-xl drop-shadow">
               DOUBLED DOWN!
             </div>
           </div>

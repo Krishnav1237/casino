@@ -181,22 +181,22 @@ export default function StakeMinesGame() {
 
   const getCellContent = (cell: Cell) => {
     if (!cell.isRevealed) return null
-    if (cell.isMine) return <Star className="w-12 h-12 text-white" />
-    if (cell.isGem) return <Gem className="w-12 h-12 text-white" />
+    if (cell.isMine) return <Star className="w-12 h-12 text-danger" />
+    if (cell.isGem) return <Gem className="w-12 h-12 text-success" />
     return null
   }
 
   const getCellClasses = (cell: Cell, row: number, col: number) => {
     let classes = 'w-12 h-12 md:w-20 md:h-20 flex items-center justify-center cursor-pointer transition-all duration-200 rounded-xl text-3xl '
-    
+
     if (cell.isRevealed) {
       if (cell.isMine) {
-        classes += 'bg-red-500 border-red-400'
+        classes += 'bg-danger/30 border-danger/70 text-foreground'
       } else if (cell.isGem) {
-        classes += 'bg-green-500 border-green-400'
+        classes += 'bg-success/30 border-success/60 text-foreground'
       }
     } else {
-      classes += 'bg-slate-700 hover:bg-slate-600 border-yellow-400'
+      classes += 'bg-primary/80 hover:bg-primary/70 border-accent/30'
     }
     
     return classes
@@ -207,13 +207,13 @@ export default function StakeMinesGame() {
       <div className="max-w-8xl mx-auto">
         <div className="flex flex-col-reverse md:flex-row justify-center">
           {/* Left Panel - Controls */}
-          <div className="bg-slate-800 p-6 space-y-6 border-t-4 md:border-t-0 md:border-r-4 border-[#0A1A2F] md:rounded-l-2xl rounded-b-2xl md:rounded-r-none">
+          <div className="bg-primary/60 p-6 space-y-6 border-t-4 md:border-t-0 md:border-r-8 border-background md:rounded-l-2xl rounded-b-2xl md:rounded-r-none">
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Bet Amount</label>
+              <label className="block text-foreground text-sm font-medium mb-2">Bet Amount</label>
               <div className="flex items-center space-x-2 mb-2">
                 <button
                   onClick={() => setBetAmount(Math.max(0.01, betAmount - 1))}
-                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg font-bold text-lg shadow"
+                  className="bg-primary/80 hover:bg-primary/70 text-foreground w-10 h-10 rounded-lg font-bold text-lg shadow"
                   disabled={gameState === 'playing'}
                 >
                   -
@@ -222,14 +222,14 @@ export default function StakeMinesGame() {
                   type="number"
                   value={betAmount.toFixed(2)}
                   onChange={(e) => setBetAmount(Math.max(0.01, parseFloat(e.target.value) || 0.01))}
-                  className="flex-1 bg-slate-700 text-white px-4 py-2 rounded-lg text-center font-bold text-lg border-2 border-slate-600"
+                  className="flex-1 bg-primary/80 text-foreground px-4 py-2 rounded-lg text-center font-bold text-lg border-2 border-accent/20"
                   disabled={gameState === 'playing'}
                   step="0.01"
                   min="0.01"
                 />
                 <button
                   onClick={() => setBetAmount(betAmount + 1)}
-                  className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-lg font-bold text-lg shadow"
+                  className="bg-primary/80 hover:bg-primary/70 text-foreground w-10 h-10 rounded-lg font-bold text-lg shadow"
                   disabled={gameState === 'playing'}
                 >
                   +
@@ -241,14 +241,14 @@ export default function StakeMinesGame() {
                   <button
                     key={amount}
                     onClick={() => setBetAmount(amount)}
-                    className="bg-slate-700 hover:bg-slate-600 text-white py-1 rounded font-bold text-sm border border-slate-600 shadow"
+                    className="bg-primary/80 hover:bg-primary/70 text-foreground py-1 rounded font-bold text-sm border border-accent/20 shadow"
                     disabled={gameState === 'playing'}
                   >
                     ${amount}
                   </button>
                 ))}
               </div>
-              <hr className="my-4 border-slate-700/40" />
+              <hr className="my-4 border-accent/20" />
               {/* Casino Info Section */}
               {/* <div className="bg-slate-700/60 rounded-lg p-3 text-xs text-white text-center font-semibold mb-2">
                 💡 Tip: The more mines, the higher the risk and reward!<br />
@@ -258,11 +258,11 @@ export default function StakeMinesGame() {
             </div>
 
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Mines: {mineCount}</label>
+              <label className="block text-foreground text-sm font-medium mb-2">Mines: {mineCount}</label>
               <select
                 value={mineCount}
                 onChange={(e) => setMineCount(parseInt(e.target.value))}
-                className="w-full bg-slate-700 text-white px-4 py-2 rounded-lg"
+                className="w-full bg-background text-foreground px-4 py-2 rounded-lg border-accent/10"
                 disabled={gameState === 'playing'}
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
@@ -272,10 +272,10 @@ export default function StakeMinesGame() {
             </div>
 
             <div className="text-center">
-              <div className="text-green-400 text-2xl font-bold mb-2 bg-slate-700">
+              <div className="text-success text-2xl font-bold mb-2 bg-primary/80 px-3 py-1 rounded-md inline-block">
                 ${(betAmount * currentMultiplier).toFixed(2)} USD
               </div>
-              <div className="text-gray-400 text-sm">
+              <div className="text-muted text-sm">
                 {currentMultiplier.toFixed(2)}x multiplier
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function StakeMinesGame() {
               {gameState === 'betting' && (
                 <button
                   onClick={startGame}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-bold text-lg"
+                  className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-foreground py-3 rounded-lg font-bold text-lg"
                   disabled={betAmount > balance}
                 >
                   START BET
@@ -294,7 +294,7 @@ export default function StakeMinesGame() {
               {gameState === 'playing' && (
                 <button
                   onClick={cashOut}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-bold text-lg"
+                  className="w-full bg-accent hover:bg-accent/90 text-foreground py-3 rounded-lg font-bold text-lg"
                   disabled={gemsFound === 0}
                 >
                   CASHOUT
@@ -304,7 +304,7 @@ export default function StakeMinesGame() {
               {gameState === 'ended' && (
                 <button
                   onClick={resetGame}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-bold text-lg"
+                  className="w-full bg-primary/85 hover:bg-primary/80 text-foreground py-3 rounded-lg font-bold text-lg"
                 >
                   New BET
                 </button>
@@ -312,13 +312,26 @@ export default function StakeMinesGame() {
             </div>
 
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-1">Gems Found: {gemsFound}</div>
-              <div className="text-gray-400 text-sm">Safe Cells: {TOTAL_CELLS - mineCount}</div>
+              <div className="text-muted text-sm mb-1">Gems Found: {gemsFound}</div>
+              <div className="text-muted text-sm">Safe Cells: {TOTAL_CELLS - mineCount}</div>
             </div>
+
+            
+            {gameResult === 'win' && (
+              <div className="text-center text-success font-bold text-xl">
+                🎉 Winner! +${(betAmount * currentMultiplier - betAmount).toFixed(2)}
+              </div>
+            )}
+
+            {gameResult === 'lose' && (
+              <div className="text-center text-danger font-bold text-xl">
+                💣 Boom! -{betAmount.toFixed(2)} USD
+              </div>
+            )}
           </div>
 
           {/* Center Panel - Game Grid */}
-          <div className="bg-slate-800 p-6 md:rounded-r-2xl rounded-t-2xl md:rounded-t-none">
+          <div className="bg-primary/60 p-6 md:rounded-r-2xl rounded-t-2xl md:rounded-t-none">
             {/* <h2 className="text-white text-xl font-bold text-center mb-6">MINES GAME</h2> */}
             
             <div className="grid grid-cols-5 gap-4 md:gap-8">
@@ -334,18 +347,6 @@ export default function StakeMinesGame() {
                 ))
               )}
             </div>
-
-            {gameResult === 'win' && (
-              <div className="text-center text-green-400 font-bold text-xl mb-4">
-                🎉 Winner! +${(betAmount * currentMultiplier - betAmount).toFixed(2)}
-              </div>
-            )}
-
-            {gameResult === 'lose' && (
-              <div className="text-center text-red-400 font-bold text-xl mb-4">
-                💣 Boom! -{betAmount.toFixed(2)} USD
-              </div>
-            )}
           </div>
 
           {/* Right Panel - Recent Games */}

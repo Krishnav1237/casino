@@ -83,9 +83,9 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
 
   return (
     <div className="w-full px-4 py-6">
-      <div className="max-w-7xl mx-auto bg-primary rounded-xl shadow-xl p-6 md:flex md:gap-8 items-start">
+      <div className="max-w-7xl mx-auto border-5 border-primary rounded-xl shadow-xl p-6 md:flex md:gap-8 items-start">
         {/* Left - Slot Game Display */}
-        <div className="flex-1 bg-secondary/10 p-6 rounded-lg">
+        <div className="flex-1 bg-secondary/20 p-6 rounded-lg">
           <h2 className="text-2xl font-bold text-foreground mb-10">Slot Machine</h2>
 
           <div className="flex justify-center items-center gap-4 mb-4">
@@ -110,7 +110,7 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
         </div>
 
         {/* Right - Controls */}
-        <div className="w-full md:w-80 mt-6 md:mt-0 bg-secondary/10 p-6 rounded-lg space-y-6">
+        <div className="w-full md:w-80 mt-6 md:mt-0 bg-secondary/20 p-6 rounded-lg space-y-6">
           {/* Bet Controls */}
           <div>
             <label className="block text-base text-muted mb-3">Bet Amount</label>
@@ -155,7 +155,7 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
             className={`w-full py-3 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-all ${
               balance < bet || isSpinning
                 ? 'bg-muted text-foreground/50 cursor-not-allowed'
-                : 'bg-accent/70 text-background hover:brightness-110'
+                : 'bg-accent/70 text-foreground hover:brightness-110'
             }`}
           >
             <Play size={20} className={isSpinning ? 'animate-spin' : ''} />

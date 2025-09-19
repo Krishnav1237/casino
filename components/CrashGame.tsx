@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Play, DollarSign } from 'lucide-react';
+import CrashChart from './CrashChart';
 
 interface CrashGameProps {
   balance: number;
@@ -94,89 +95,47 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
   };
 
   // Simple line graph using SVG
-  const Graph = () => {
-    const width = 300;
-    const height = 100;
-    if (history.length < 2) return null;
-
-    const maxVal = Math.max(...history, crashPoint || 0);
-    const points = history
-      .map((val, idx) => {
-        const x = (idx / (history.length - 1)) * width;
-        const y = height - (val / maxVal) * height;
-        return `${x},${y}`;
-      })
-      .join(' ');
-
-    // Crash line X position
-    const crashIndex = history.findIndex(val => val >= (crashPoint || 0));
-    const crashX = crashIndex >= 0 ? (crashIndex / (history.length - 1)) * width : width;
-
-    return (
-      <svg width={width} height={height} className="mx-auto mb-4" aria-label="Multiplier graph">
-        <polyline
-          fill="none"
-          stroke="#4ade80" // green
-          strokeWidth={3}
-          points={points}
-        />
-        {/* Crash line */}
-        {crashPoint && (
-          <line
-            x1={crashX}
-            y1={0}
-            x2={crashX}
-            y2={height}
-            stroke="#f87171" // red
-            strokeWidth={2}
-            strokeDasharray="4 4"
-          />
-        )}
-        {/* Labels */}
-        <text x={0} y={height} fill="#ddd" fontSize="10">1x</text>
-        <text x={width - 40} y={15} fill="#ddd" fontSize="10">{maxVal.toFixed(2)}x</text>
-      </svg>
-    );
-  };
+  // We'll render the CrashGraph canvas component below instead of the inline SVG
 
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 py-6 min-h-full">
-      <div className="max-w-screen-xl mx-auto bg-primary/90 rounded-2xl p-8 px-10 shadow-2xl backdrop-blur-md flex flex-col md:flex-row gap-8">
+      <div className="max-w-screen-xl mx-auto bg-primary/60 rounded-2xl p-8 px-10 shadow-2xl backdrop-blur-md flex flex-col md:flex-row gap-8">
         {/* Graph side */}
         <div className="flex-1 flex flex-col items-center justify-center">
-          <h2 className="text-3xl font-extrabold text-foreground mb-6 md:hidden">Crash Game</h2>
-          <Graph />
+          <h2 className="text-2xl font-extrabold text-foreground mb-4 md:hidden">Crash</h2>
+          <div className="w-full flex items-center justify-center mb-8">
+            <CrashChart history={history} crashPoint={crashPoint} height={300} width={680} revealCrash={!isRunning && crashPoint != null} />
+          </div>
           {/* Multiplier Display */}
-          <div className="text-center mb-6 bg-gradient-to-br from-background via-primary to-secondary/30 rounded-xl p-6 border-2 border-accent shadow-lg w-full max-w-sm">
+          <div className="text-center rounded-xl p-4 w-full max-w-md bg-primary/95 border border-accent/10 shadow-lg">
             <div
-              className={`text-6xl font-extrabold transition-all duration-300 ${
+              className={`text-3xl md:text-4xl font-extrabold transition-all duration-300 ${
                 !isRunning
-                  ? 'text-foreground/60'
+                  ? 'text-foreground/70'
                   : hasCashedOut
-                  ? 'text-success drop-shadow-lg'
+                  ? 'text-success'
                   : crashPoint && multiplier >= crashPoint
-                  ? 'text-danger animate-pulse'
-                  : 'text-accent animate-pulse drop-shadow-lg scale-110'
+                  ? 'text-danger'
+                  : 'text-accent'
               }`}
             >
               {multiplier.toFixed(2)}x
             </div>
             {isRunning && crashPoint && multiplier >= crashPoint && !hasCashedOut && (
-              <div className="text-danger text-xl mt-3 font-extrabold animate-bounce">💥 Crashed at {crashPoint}x!</div>
+              <div className="text-danger text-lg mt-2 font-bold">💥 Crashed at {crashPoint}x!</div>
             )}
             {hasCashedOut && (
-              <div className="text-success text-xl mt-3 font-extrabold">💰 Cashed out at {multiplier.toFixed(2)}x</div>
+              <div className="text-success text-lg mt-2 font-bold">💰 Cashed out at {multiplier.toFixed(2)}x</div>
             )}
-            {/* Show crash message if game ended and player didn't cash out */}
             {!isRunning && crashed && !hasCashedOut && (
-              <div className="text-danger text-xl mt-3 font-extrabold animate-bounce">💥 Crashed at {crashPoint}x!</div>
+              <div className="text-danger text-lg mt-2 font-bold">💥 Crashed at {crashPoint}x!</div>
             )}
           </div>
         </div>
 
         {/* Controls side */}
         <div className="flex-1 flex flex-col justify-center">
-          <h2 className="text-3xl font-extrabold text-foreground mb-6 hidden md:block">🚀 Crash Game</h2>
+          <h2 className="text-3xl font-extrabold text-foreground mb-6 hidden md:block">Crash Game</h2>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
@@ -187,7 +146,7 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
                 className={`flex-1 py-4 rounded-2xl font-extrabold text-2xl flex items-center justify-center gap-2 transition-all shadow-xl ${
                   balance < bet || bet < 1
                     ? 'bg-muted text-foreground/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-accent to-secondary hover:scale-105 text-background'
+                    : 'bg-gradient-to-r from-accent to-secondary hover:scale-105 text-foreground'
                 }`}
               >
                 <Play size={28} />
@@ -200,7 +159,7 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
                 className={`flex-1 py-4 rounded-2xl font-extrabold text-2xl flex items-center justify-center gap-2 transition-all shadow-xl border-2 ${
                   hasCashedOut
                     ? 'bg-muted text-foreground/50 cursor-not-allowed border-muted'
-                    : 'bg-gradient-to-r from-success to-success/80 hover:scale-105 text-white border-success animate-pulse'
+                    : 'bg-gradient-to-r from-success to-success/80 hover:scale-105 text-foreground border-success animate-pulse'
                 }`}
               >
                 <DollarSign size={28} />
@@ -219,21 +178,21 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
               <button
                 onClick={() => adjustBet(-5)}
                 disabled={bet <= 1 || isRunning}
-                className="flex-1 bg-gradient-to-r from-primary to-danger/80 hover:from-primary/80 hover:to-danger text-white py-2 px-3 rounded-lg font-semibold transition-colors shadow disabled:opacity-50"
+                className="flex-1 bg-danger/80 text-foreground py-2 px-3 rounded-lg font-semibold transition-colors shadow disabled:opacity-50"
               >
                 -5
               </button>
               <button
                 onClick={() => adjustBet(5)}
                 disabled={bet >= Math.min(100, balance) || isRunning}
-                className="flex-1 bg-gradient-to-r from-primary to-success/80 hover:from-primary/80 hover:to-success text-white py-2 px-3 rounded-lg font-semibold transition-colors shadow disabled:opacity-50"
+                className="flex-1 bg-success/80 text-foreground py-2 px-3 rounded-lg font-semibold transition-colors shadow disabled:opacity-50"
               >
                 +5
               </button>
               <button
                 onClick={maxBet}
                 disabled={isRunning}
-                className="flex-1 bg-gradient-to-r from-primary to-secondary/80 hover:from-primary/80 hover:to-secondary text-white py-2 px-3 rounded-lg font-semibold transition-colors shadow disabled:opacity-50"
+                className="flex-1 bg-primary text-foreground py-2 px-3 rounded-lg font-semibold transition-colors shadow disabled:opacity-50"
               >
                 Max (${Math.min(100, balance)})
               </button>

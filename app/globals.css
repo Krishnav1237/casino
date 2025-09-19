@@ -19,8 +19,8 @@
 
 
 @theme inline {
-  --color-background: var(--casino-black);       /* Dark mode background */
-  --color-foreground: var(--casino-white);       /* Light text for dark bg */
+  --color-background: var(--background);       /* Dark mode background */
+  --color-foreground: var(--foreground);       /* Light text for dark bg */
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

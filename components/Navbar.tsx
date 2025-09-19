@@ -8,7 +8,7 @@ function Navbar({ title }: { title: string }) {
   const { balance } = useBalanceStore();
 
   return (
-    <nav className="flex items-center justify-between px-6 h-16 border-b border-accent/30 bg-primary">
+    <nav className="flex items-center justify-between px-6 h-16 border-b border-accent/30">
       <Link
         href="/"
         className="flex items-center gap-2 text-accent hover:text-secondary transition-colors"
