@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Dice1, Wallet, Gamepad2, Sparkles, Bomb, TrendingUp } from 'lucide-react';
+import { Dice1, Gamepad2, Sparkles, Bomb, TrendingUp } from 'lucide-react';
+import ConnectWalletButton from '@/components/ConnectWalletButton';
 
 export default function LandingPage() {
   return (
@@ -16,9 +17,7 @@ export default function LandingPage() {
           <Link href="#features" className="hover:text-[var(--accent)] transition">Features</Link>
           <Link href="#how" className="hover:text-[var(--accent)] transition">How it Works</Link>
         </nav>
-        <button className="bg-[var(--accent)] hover:bg-[var(--secondary)] px-4 py-2 rounded-xl font-semibold flex items-center gap-2 transition">
-          <Wallet size={18}/> Connect Wallet
-        </button>
+        <ConnectWalletButton />
       </header>
 
       {/* Hero Section */}
@@ -70,29 +69,21 @@ export default function LandingPage() {
         <div className="grid grid-cols-2 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
           <Link href="/blackjack-game">
           <div className="bg-[var(--primary)] rounded-2xl p-6 text-center border border-[var(--accent)]/20 hover:border-[var(--accent)] transition h-60 w-80 flex justify-center">
-            {/* <Cards className="mx-auto text-[var(--accent)] mb-4" size={40}/> */}
-            {/* <h4 className="font-bold text-lg">Blackjack</h4> */}
             <img src="/game/card.png" alt=""/>
           </div>
           </Link>
           <Link href="/mine-game">
           <div className="bg-[var(--primary)] rounded-2xl p-6 text-center border border-[var(--accent)]/20 hover:border-[var(--accent)] transition h-60 w-80 flex justify-center">
-            {/* <Bomb className="mx-auto text-[var(--accent)] mb-4" size={40}/> */}
-            {/* <h4 className="font-bold text-lg">Mines</h4> */}
             <img src="/game/mine.png" alt=""/>
           </div>
           </Link>
           <Link href="/slot-game">
           <div className="bg-[var(--primary)] rounded-2xl p-6 text-center border border-[var(--accent)]/20 hover:border-[var(--accent)] transition h-60 w-80 flex justify-center">
-            {/* <SlotMachine className="mx-auto text-[var(--accent)] mb-4" size={40}/> */}
-            {/* <h4 className="font-bold text-lg">Slots</h4> */}
             <img src="/game/slot.png" alt="" />
           </div>
           </Link>
           <Link href="/crash-game">
           <div className="bg-[var(--primary)] rounded-2xl p-6 text-center border border-[var(--accent)]/20 hover:border-[var(--accent)] transition h-60 w-80 flex justify-center items-center">
-            {/* <TrendingUp className="mx-auto text-[var(--accent)] mb-4" size={40}/> */}
-            {/* <h4 className="font-bold text-lg">Crash</h4> */}
             <img src="/game/crash.png" alt="" className='h-72'/>
           </div>
           </Link>

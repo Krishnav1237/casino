@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, Plus, Minus } from 'lucide-react';
+import { Play, Plus, Minus, TriangleAlert } from 'lucide-react';
 
-const SYMBOLS = ['🍒', '🍋', '🍊', '⭐', '💎'];
+import { spinSlots, usdToEth } from '@/lib/api';
+
+  '🍒': 2,
 const PAYOUTS: Record<string, number> = {
   '🍒': 2,
   '🍋': 3,
@@ -21,11 +23,9 @@ interface SlotGameProps {
 export default function SlotGame({ balance, onBalanceChange, onGameResult }: SlotGameProps) {
   const [bet, setBet] = useState(10);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [reels, setReels] = useState(['🍒', '🍒', '🍒']);
+  const [reels, setReels] = useState<string[]>(['🍒', '🍒', '🍒']);
   const [lastWin, setLastWin] = useState(0);
   const [showWin, setShowWin] = useState(false);
-
-  const spin = async () => {
     if (balance < bet || isSpinning) return;
 
     setIsSpinning(true);
@@ -84,7 +84,7 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
   return (
     <div className="w-full px-4 py-6">
       <div className="max-w-7xl mx-auto border-5 border-primary rounded-xl shadow-xl p-6 md:flex md:gap-8 items-start">
-        {/* Left - Slot Game Display */}
+
         <div className="flex-1 bg-secondary/20 p-6 rounded-lg">
           <h2 className="text-2xl font-bold text-foreground mb-10">Slot Machine</h2>
 
@@ -93,8 +93,8 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
               <div
                 key={idx}
                 className={`w-20 h-20 sm:w-36 sm:h-36 bg-foreground rounded-lg flex items-center justify-center text-6xl border border-accent transition-transform ${
-                  isSpinning ? 'animate-pulse' : ''
                 }`}
+
               >
                 {symbol}
               </div>
@@ -104,10 +104,10 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
           {showWin && lastWin > 0 && (
             <div className="text-center mt-2">
               <div className="text-success text-xl font-bold">+${lastWin} Win</div>
-              <div className="text-muted text-sm">({PAYOUTS[reels[0]]}x payout)</div>
+          <div className="flex justify-center items-center gap-4 mb-4">
             </div>
-          )}
-        </div>
+              <div
+                key={idx}
 
         {/* Right - Controls */}
         <div className="w-full md:w-80 mt-6 md:mt-0 bg-secondary/20 p-6 rounded-lg space-y-6">
@@ -119,8 +119,8 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
                 onClick={() => adjustBet(-5)}
                 className="w-8 h-8 bg-danger text-foreground rounded flex items-center justify-center disabled:opacity-50"
                 disabled={bet <= 1}
-              >
-                <Minus size={16} />
+              <div className="text-success text-xl font-bold">+${lastWin} Win</div>
+              <div className="text-muted text-sm">({PAYOUTS[reels[0]]}x payout)</div>
               </button>
               <span className="text-xl font-bold text-accent">${bet}</span>
               <button
@@ -128,16 +128,19 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
                 className="w-8 h-8 bg-success text-foreground rounded flex items-center justify-center disabled:opacity-50"
                 disabled={bet >= Math.min(100, balance)}
               >
+          <div>
+            <label className="block text-base text-muted mb-3">Bet Amount</label>
+            <div className="flex items-center justify-between">
                 <Plus size={16} />
               </button>
             </div>
 
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => setBet(1)}
                 className="flex-1 bg-primary text-foreground py-1 rounded text-sm"
               >
                 Min ($1)
+              <span className="text-xl font-bold text-accent">${bet}</span>
+              <button
+                onClick={() => adjustBet(5)}
               </button>
               <button
                 onClick={maxBet}
@@ -146,16 +149,13 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
                 Max (${Math.min(100, balance)})
               </button>
             </div>
-          </div>
-
-          {/* Spin Button */}
           <button
-            onClick={spin}
-            disabled={balance < bet || isSpinning}
+                Min ($1)
+              </button>
             className={`w-full py-3 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-all ${
-              balance < bet || isSpinning
-                ? 'bg-muted text-foreground/50 cursor-not-allowed'
-                : 'bg-accent/70 text-foreground hover:brightness-110'
+                Max (${Math.min(100, balance)})
+              </button>
+            </div>
             }`}
           >
             <Play size={20} className={isSpinning ? 'animate-spin' : ''} />
@@ -173,9 +173,9 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
             )}
           </div>
         </div>
+          <div className="text-center text-sm text-muted">
+            Balance: <span className="text-success font-semibold text-base">${balance.toFixed(2)}</span>
       </div>
-
-      {/* Payout Table */}
       <div className="max-w-7xl mx-auto mt-8">
         <h3 className="text-center text-muted text-base font-semibold mb-2">
           Payouts for 3 Matching Symbols
@@ -192,6 +192,12 @@ export default function SlotGame({ balance, onBalanceChange, onGameResult }: Slo
           ))}
         </div>
       </div>
-    </div>
+      </div>
   );
 }
+
+
+
+
+
+

@@ -2,6 +2,7 @@ import { useBalanceStore } from '@/store/balanceStore'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+import ConnectWalletButton from './ConnectWalletButton'
 
 function Navbar({ title }: { title: string }) {
 
@@ -19,8 +20,11 @@ function Navbar({ title }: { title: string }) {
 
       <h1 className="text-xl font-semibold text-foreground">{title}</h1>
 
-      <div className="text-xl font-bold text-accent">
-        ${balance.toFixed(2)} USD
+      <div className="flex items-center gap-3">
+        <div className="text-xl font-bold text-accent">
+          ${balance.toFixed(2)} USD
+        </div>
+        <ConnectWalletButton />
       </div>
     </nav>
   )

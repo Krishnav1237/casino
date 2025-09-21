@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Play, DollarSign } from 'lucide-react';
+import { Play, DollarSign, TriangleAlert } from 'lucide-react';
 import CrashChart from './CrashChart';
+import { useWalletStore } from '@/store/walletStore';
+import { playCrash, usdToEth } from '@/lib/api';
 
 interface CrashGameProps {
   balance: number;
@@ -18,11 +20,19 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
   const [crashPoint, setCrashPoint] = useState<number | null>(null);
   const [history, setHistory] = useState<number[]>([]); // For graph data
   const [crashed, setCrashed] = useState(false); // New state to show crash after stop
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [txError, setTxError] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { address } = useWalletStore();
 
   // Start the game
   const startGame = () => {
     if (isRunning || balance < bet || bet < 1) return;
+    if (!address) {
+      alert('Connect your wallet first.');
+      return;
+    }
 
     const newCrashPoint = parseFloat((Math.random() * 10 + 1).toFixed(2)); // 1.00x to 11.00x crash
     setCrashPoint(newCrashPoint);
@@ -31,8 +41,19 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
     setHasCashedOut(false);
     setIsRunning(true);
     setCrashed(false);
+    setTxHash(null);
+    setTxError(null);
 
     onBalanceChange(-bet);
+
+    // Fire backend bet (no multiplier target - server uses default 0)
+    playCrash({ userAddress: address, betEth: usdToEth(bet), multiplier: 0 })
+      .then((res) => setTxHash(res.txHash))
+      .catch((err) => {
+        setTxError(err?.message || 'Transaction failed');
+        // Rollback if relay fails
+        onBalanceChange(bet);
+      });
   };
 
   // Cash out
@@ -94,9 +115,6 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
     setBet(Math.min(100, balance));
   };
 
-  // Simple line graph using SVG
-  // We'll render the CrashGraph canvas component below instead of the inline SVG
-
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 py-6 min-h-full">
       <div className="max-w-screen-xl mx-auto bg-primary/60 rounded-2xl p-8 px-10 shadow-2xl backdrop-blur-md flex flex-col md:flex-row gap-8">
@@ -129,6 +147,17 @@ export default function CrashGame({ balance, onBalanceChange, onGameResult }: Cr
             )}
             {!isRunning && crashed && !hasCashedOut && (
               <div className="text-danger text-lg mt-2 font-bold">💥 Crashed at {crashPoint}x!</div>
+            )}
+            {/* Tx status */}
+            {txHash && (
+              <div className="text-xs text-muted text-center break-all mt-2">
+                Tx submitted: <span className="text-accent font-semibold">{txHash}</span>
+              </div>
+            )}
+            {txError && (
+              <div className="text-xs text-danger text-center flex items-center justify-center gap-1 mt-2">
+                <TriangleAlert size={14} /> {txError}
+              </div>
             )}
           </div>
         </div>

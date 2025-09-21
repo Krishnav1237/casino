@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { Star, Gem } from 'lucide-react'
+import { Star, Gem, TriangleAlert } from 'lucide-react'
 import { useBalanceStore } from '../store/balanceStore'
+import { useWalletStore } from '@/store/walletStore'
+import { playMines, usdToEth } from '@/lib/api'
 
 interface Cell {
   isRevealed: boolean
@@ -14,6 +16,7 @@ type GameState = 'betting' | 'playing' | 'ended'
 
 export default function StakeMinesGame() {
   const { balance, increment, decrement } = useBalanceStore()
+  const { address } = useWalletStore()
   const [betAmount, setBetAmount] = useState(2.00)
   const [mineCount, setMineCount] = useState(3)
   const [gameState, setGameState] = useState<GameState>('betting')
@@ -21,13 +24,8 @@ export default function StakeMinesGame() {
   const [currentMultiplier, setCurrentMultiplier] = useState(1.0)
   const [gemsFound, setGemsFound] = useState(0)
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null)
-  const [recentGames, setRecentGames] = useState([
-    { profit: 12.50, mines: 5, multiplier: 3.5 },
-    { profit: -5.00, mines: 2, multiplier: 1.5 },
-    { profit: 20.75, mines: 3, multiplier: 4.15 },
-    { profit: 8.25, mines: 4, multiplier: 2.75 },
-    { profit: -10.00, mines: 1, multiplier: 0 }
-  ])
+  const [txHash, setTxHash] = useState<string | null>(null)
+  const [txError, setTxError] = useState<string | null>(null)
 
   const GRID_SIZE = 5
   const TOTAL_CELLS = GRID_SIZE * GRID_SIZE
@@ -64,8 +62,8 @@ export default function StakeMinesGame() {
   // Place mines randomly
   const placeMines = useCallback((grid: Cell[][], mines: number) => {
     const newGrid = grid.map(row => row.map(cell => ({ ...cell })))
-    const positions = []
-    
+    const positions: { row: number; col: number }[] = []
+
     // Get all positions
     for (let row = 0; row < GRID_SIZE; row++) {
       for (let col = 0; col < GRID_SIZE; col++) {
@@ -102,17 +100,31 @@ export default function StakeMinesGame() {
       alert('Insufficient balance!')
       return
     }
-    
+    if (!address) {
+      alert('Connect your wallet first.')
+      return
+    }
+
     decrement(betAmount)
     setGameState('playing')
     setCurrentMultiplier(1.0)
     setGemsFound(0)
     setGameResult(null)
-    
+    setTxHash(null)
+    setTxError(null)
+
     const newGrid = initializeGrid()
     const gridWithMines = placeMines(newGrid, mineCount)
     setGrid(gridWithMines)
-  }, [betAmount, balance, mineCount, initializeGrid, placeMines, decrement])
+
+    playMines({ userAddress: address, betEth: usdToEth(betAmount), minesPicked: mineCount })
+      .then((res) => setTxHash(res.txHash))
+      .catch((err) => {
+        setTxError(err?.message || 'Transaction failed')
+        increment(betAmount)
+        setGameState('betting')
+      })
+  }, [betAmount, balance, address, mineCount, initializeGrid, placeMines, decrement, increment])
 
   // Handle cell click
   const handleCellClick = useCallback((row: number, col: number) => {
@@ -135,12 +147,6 @@ export default function StakeMinesGame() {
         }
       }
       setGrid(newGrid)
-      
-      // Add to recent games
-      setRecentGames(prev => [
-        { profit: -betAmount, mines: mineCount, multiplier: 0 },
-        ...prev.slice(0, 4)
-      ])
     } else {
       // Found gem
       const newGemsFound = gemsFound + 1
@@ -148,7 +154,7 @@ export default function StakeMinesGame() {
       const newMultiplier = calculateMultiplier(newGemsFound, mineCount)
       setCurrentMultiplier(newMultiplier)
     }
-  }, [gameState, grid, gemsFound, mineCount, calculateMultiplier, betAmount])
+  }, [gameState, grid, gemsFound, mineCount, calculateMultiplier])
 
   // Cash out
   const cashOut = useCallback(() => {
@@ -158,13 +164,7 @@ export default function StakeMinesGame() {
     increment(winnings)
     setGameState('ended')
     setGameResult('win')
-    
-    // Add to recent games
-    setRecentGames(prev => [
-      { profit: winnings - betAmount, mines: mineCount, multiplier: currentMultiplier },
-      ...prev.slice(0, 4)
-    ])
-  }, [gameState, gemsFound, betAmount, currentMultiplier, mineCount, increment])
+  }, [gameState, gemsFound, betAmount, currentMultiplier, increment])
 
   // Reset game
   const resetGame = useCallback(() => {
@@ -173,6 +173,8 @@ export default function StakeMinesGame() {
     setCurrentMultiplier(1.0)
     setGemsFound(0)
     setGameResult(null)
+    setTxHash(null)
+    setTxError(null)
   }, [initializeGrid])
 
   useEffect(() => {
@@ -249,12 +251,6 @@ export default function StakeMinesGame() {
                 ))}
               </div>
               <hr className="my-4 border-accent/20" />
-              {/* Casino Info Section */}
-              {/* <div className="bg-slate-700/60 rounded-lg p-3 text-xs text-white text-center font-semibold mb-2">
-                💡 Tip: The more mines, the higher the risk and reward!<br />
-                Last win: {recentGames[0]?.profit > 0 ? `+${recentGames[0].profit.toFixed(2)} USD` : `${recentGames[0].profit.toFixed(2)} USD`}<br />
-                Last multiplier: {recentGames[0]?.multiplier.toFixed(2)}x
-              </div> */}
             </div>
 
             <div>
@@ -311,12 +307,19 @@ export default function StakeMinesGame() {
               )}
             </div>
 
+            {/* Tx status */}
+            {txHash && (
+              <div className="text-xs text-muted text-center break-all">Tx submitted: <span className="text-accent font-semibold">{txHash}</span></div>
+            )}
+            {txError && (
+              <div className="text-xs text-danger text-center flex items-center justify-center gap-1"><TriangleAlert size={14} /> {txError}</div>
+            )}
+
             <div className="text-center">
               <div className="text-muted text-sm mb-1">Gems Found: {gemsFound}</div>
               <div className="text-muted text-sm">Safe Cells: {TOTAL_CELLS - mineCount}</div>
             </div>
 
-            
             {gameResult === 'win' && (
               <div className="text-center text-success font-bold text-xl">
                 🎉 Winner! +${(betAmount * currentMultiplier - betAmount).toFixed(2)}
@@ -333,7 +336,7 @@ export default function StakeMinesGame() {
           {/* Center Panel - Game Grid */}
           <div className="bg-primary/60 p-6 md:rounded-r-2xl rounded-t-2xl md:rounded-t-none">
             {/* <h2 className="text-white text-xl font-bold text-center mb-6">MINES GAME</h2> */}
-            
+
             <div className="grid grid-cols-5 gap-4 md:gap-8">
               {grid.map((row, rowIndex) =>
                 row.map((cell, colIndex) => (
@@ -348,34 +351,6 @@ export default function StakeMinesGame() {
               )}
             </div>
           </div>
-
-          {/* Right Panel - Recent Games */}
-          {/* <div className="bg-slate-800 rounded-xl p-6">
-            <h3 className="text-white text-lg font-bold mb-4">Recent Games</h3>
-            <div className="space-y-2">
-              {recentGames.map((game, index) => (
-                <div key={index} className="bg-slate-700 rounded-lg p-3 text-sm">
-                  <div className={`font-bold ${game.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {game.profit >= 0 ? '+' : ''}{game.profit.toFixed(2)} USD
-                  </div>
-                  <div className="text-gray-400">
-                    {game.mines} mines, {game.multiplier.toFixed(2)}x
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-slate-700">
-              <div className="text-gray-400 text-xs text-center">
-                <div className="flex items-center justify-center space-x-4 mb-2">
-                  <span>💎 Visa</span>
-                  <span>💳 Mastercard</span>
-                  <span>₿ Crypto</span>
-                </div>
-                <p>Gambling can be addictive, please play responsibly.</p>
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
     </div>
